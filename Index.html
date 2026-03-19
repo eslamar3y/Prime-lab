@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prime Lab - معامل التحاليل الطبية</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #0d6efd;
+    --primary-dark: #0a58ca;
+    --primary-glow: rgba(13,110,253,0.18);
+    --accent: #00c9a7;
+    --accent2: #ffc72c;
+    --bg: #0b0f1a;
+    --bg2: #111827;
+    --bg3: #1a2235;
+    --surface: #131c2e;
+    --surface2: #1e293b;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #f1f5f9;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+    --grad-blue: linear-gradient(135deg, #0d6efd, #0ea5e9);
+    --grad-teal: linear-gradient(135deg, #00c9a7, #0ea5e9);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { font-family:'Cairo',sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; }
+
+  /* NAV */
+  nav {
+    position:fixed; top:0; width:100%; z-index:1000;
+    background:rgba(11,15,26,0.93); backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border);
+    height:72px; display:flex; align-items:center; padding:0 6%; gap:32px;
+  }
+  .nav-logo {
+    display:flex; align-items:center; gap:10px;
+    text-decoration:none; margin-right:auto; flex-shrink:0;
+  }
+  .nav-logo-icon {
+    width:40px; height:40px; border-radius:10px;
+    background:var(--grad-blue); display:flex; align-items:center; justify-content:center;
+    font-size:1.2rem; box-shadow:0 0 20px rgba(13,110,253,0.4);
+  }
+  .nav-logo-text { font-family:'Tajawal',sans-serif; font-weight:900; font-size:1.3rem; color:var(--text); }
+  .nav-logo-text span { color:var(--primary); }
+  .nav-links { display:flex; gap:4px; list-style:none; }
+  .nav-links a {
+    color:var(--text-muted); text-decoration:none;
+    font-size:0.9rem; font-weight:600;
+    padding:8px 14px; border-radius:8px; transition:all 0.2s;
+  }
+  .nav-links a:hover { color:var(--text); background:var(--surface2); }
+  .nav-book {
+    background:var(--primary) !important; color:white !important;
+    padding:9px 20px !important; border-radius:8px !important; font-weight:700 !important;
+    box-shadow:0 0 16px rgba(13,110,253,0.35);
+  }
+  .nav-book:hover { background:var(--primary-dark) !important; }
+
+  /* HERO */
+  #home {
+    min-height:100vh; background:var(--bg);
+    display:flex; align-items:center; justify-content:center;
+    padding:100px 5% 60px;
+    position:relative; overflow:hidden; text-align:center;
+  }
+  .hero-glow {
+    position:absolute; inset:0; pointer-events:none; overflow:hidden;
+  }
+  .hero-glow::before {
+    content:''; position:absolute;
+    width:700px; height:700px; border-radius:50%;
+    background:radial-gradient(circle, rgba(13,110,253,0.13) 0%, transparent 70%);
+    top:50%; left:50%; transform:translate(-50%,-60%);
+  }
+  .hero-glow::after {
+    content:''; position:absolute;
+    width:350px; height:350px; border-radius:50%;
+    background:radial-gradient(circle, rgba(0,201,167,0.07) 0%, transparent 70%);
+    bottom:0; right:10%;
+  }
+  .hero-grid {
+    position:absolute; inset:0; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+    background-size:60px 60px;
+    mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);
+  }
+  .hero-content { max-width:760px; position:relative; z-index:1; animation:fadeUp 0.9s ease both; }
+  .hero-pill {
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(13,110,253,0.1); border:1px solid rgba(13,110,253,0.28);
+    color:#60a5fa; padding:8px 20px; border-radius:50px;
+    font-size:0.88rem; font-weight:700; margin-bottom:28px;
+  }
+  .hero-pill-dot {
+    width:8px; height:8px; border-radius:50%;
+    background:var(--primary); box-shadow:0 0 8px var(--primary);
+    animation:pulse 2s infinite;
+  }
+  .hero-title {
+    font-family:'Tajawal',sans-serif;
+    font-size:clamp(2.4rem,5.5vw,4rem);
+    font-weight:900; line-height:1.15; color:var(--text); margin-bottom:22px;
+  }
+  .hero-title .hl1 {
+    background:var(--grad-blue);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .hero-title .hl2 {
+    background:var(--grad-teal);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .hero-sub {
+    font-size:1.05rem; color:var(--text-muted); line-height:1.9; margin-bottom:40px;
+    max-width:580px; margin-left:auto; margin-right:auto;
+  }
+  .hero-btns { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-bottom:56px; }
+  .btn-primary {
+    background:var(--grad-blue); color:white;
+    padding:14px 32px; border-radius:10px;
+    font-size:1rem; font-weight:700; font-family:'Cairo',sans-serif;
+    text-decoration:none; border:none; cursor:pointer; transition:all 0.25s;
+    display:inline-flex; align-items:center; gap:8px;
+    box-shadow:0 4px 24px rgba(13,110,253,0.4);
+  }
+  .btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 36px rgba(13,110,253,0.55); }
+  .btn-ghost {
+    background:transparent; color:var(--text);
+    padding:14px 32px; border-radius:10px;
+    font-size:1rem; font-weight:700; font-family:'Cairo',sans-serif;
+    text-decoration:none; border:1px solid var(--border2); cursor:pointer; transition:all 0.25s;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn-ghost:hover { background:var(--surface2); }
+  .hero-stats {
+    display:flex; justify-content:center; flex-wrap:wrap;
+    background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden;
+    animation:fadeUp 0.9s 0.2s ease both; opacity:0; animation-fill-mode:forwards;
+  }
+  .stat-item { padding:22px 36px; flex:1; min-width:130px; text-align:center; border-left:1px solid var(--border); }
+  .stat-item:last-child { border-left:none; }
+  .stat-num {
+    font-family:'Tajawal',sans-serif; font-size:1.9rem; font-weight:900;
+    background:var(--grad-blue); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .stat-label { color:var(--text-muted); font-size:0.82rem; font-weight:600; margin-top:3px; }
+
+  /* SECTIONS */
+  section { padding:90px 6%; }
+  .section-tag {
+    display:inline-flex; align-items:center; gap:6px;
+    color:var(--primary); font-size:0.82rem; font-weight:700;
+    text-transform:uppercase; letter-spacing:1.5px; margin-bottom:14px;
+  }
+  .section-tag::before { content:''; width:20px; height:2px; background:var(--primary); display:inline-block; }
+  .section-header { text-align:center; margin-bottom:60px; }
+  .section-header h2 {
+    font-family:'Tajawal',sans-serif;
+    font-size:clamp(1.9rem,3.5vw,2.7rem); font-weight:900; color:var(--text); margin-bottom:14px;
+  }
+  .section-header p { color:var(--text-muted); font-size:0.98rem; line-height:1.8; max-width:560px; margin:0 auto; }
+
+  /* FEATURES */
+  #features { background:var(--bg2); }
+  .features-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; }
+  .feature-card {
+    background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:32px 28px;
+    transition:all 0.3s; position:relative; overflow:hidden;
+    text-align:center;
+  }
+  .feature-card::after {
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(circle at 50% 0%, rgba(13,110,253,0.06), transparent 60%);
+    opacity:0; transition:opacity 0.3s;
+  }
+  .feature-card:hover { border-color:rgba(13,110,253,0.3); transform:translateY(-5px); box-shadow:0 16px 48px rgba(0,0,0,0.3); }
+  .feature-card:hover::after { opacity:1; }
+  .feature-icon {
+    width:52px; height:52px; border-radius:12px;
+    display:flex; align-items:center; justify-content:center; font-size:1.5rem;
+    margin:0 auto 20px; background:var(--surface2); border:1px solid var(--border2);
+  }
+  .feature-card h3 { font-family:'Tajawal',sans-serif; font-size:1.05rem; font-weight:800; margin-bottom:10px; color:var(--text); }
+  .feature-card p { color:var(--text-muted); font-size:0.88rem; line-height:1.75; }
+
+  /* TESTS */
+  #tests { background:var(--bg); }
+  .search-bar { max-width:480px; margin:0 auto 36px; position:relative; }
+  .search-bar input {
+    width:100%; padding:13px 18px 13px 48px;
+    border:1px solid var(--border2); border-radius:12px;
+    font-family:'Cairo',sans-serif; font-size:0.93rem;
+    background:var(--surface); color:var(--text); outline:none;
+    transition:border 0.2s,box-shadow 0.2s; direction:rtl;
+  }
+  .search-bar input::placeholder { color:var(--text-dim); }
+  .search-bar input:focus { border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-glow); }
+  .search-icon { position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--text-dim); pointer-events:none; }
+  .categories { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:36px; }
+  .cat-btn {
+    padding:8px 18px; border-radius:8px;
+    background:var(--surface); border:1px solid var(--border);
+    font-family:'Cairo',sans-serif; font-size:0.88rem; font-weight:600;
+    cursor:pointer; transition:all 0.2s; color:var(--text-muted);
+  }
+  .cat-btn.active,.cat-btn:hover { background:var(--primary); color:white; border-color:var(--primary); box-shadow:0 0 14px rgba(13,110,253,0.3); }
+  .tests-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:18px; }
+  .test-card {
+    background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:22px 20px;
+    transition:all 0.25s; cursor:pointer;
+  }
+  .test-card:hover { border-color:rgba(13,110,253,0.28); box-shadow:0 8px 32px rgba(0,0,0,0.25); }
+  .test-card.selected { border-color:var(--primary); background:rgba(13,110,253,0.05); box-shadow:0 0 0 2px rgba(13,110,253,0.2); }
+  .test-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; gap:8px; }
+  .test-name { font-family:'Tajawal',sans-serif; font-size:1rem; font-weight:800; color:var(--text); flex:1; }
+  .test-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .test-price {
+    background:var(--surface2); color:var(--accent2);
+    padding:4px 12px; border-radius:6px; font-size:0.82rem; font-weight:800; white-space:nowrap;
+    border:1px solid rgba(255,199,44,0.15);
+  }
+  .test-check {
+    width:22px; height:22px; border-radius:6px; border:1.5px solid var(--border2);
+    flex-shrink:0; display:flex; align-items:center; justify-content:center;
+    font-size:0.75rem; transition:all 0.2s; color:transparent; margin-top:1px;
+  }
+  .test-card.selected .test-check { background:var(--primary); border-color:var(--primary); color:white; }
+  .test-desc { color:var(--text-muted); font-size:0.85rem; line-height:1.6; margin-bottom:14px; }
+  .test-badges { display:flex; gap:8px; flex-wrap:wrap; }
+  .test-badge {
+    display:inline-flex; align-items:center; gap:4px;
+    background:var(--surface2); color:var(--text-dim);
+    padding:3px 10px; border-radius:5px; font-size:0.78rem; font-weight:600; border:1px solid var(--border);
+  }
+
+  /* BOOKING */
+  #booking { background:var(--bg2); }
+  .booking-wrapper {
+    max-width:700px; margin:0 auto;
+    background:var(--surface); border-radius:20px; padding:48px 44px;
+    border:1px solid var(--border); box-shadow:0 24px 80px rgba(0,0,0,0.35);
+  }
+  .notice {
+    background:rgba(255,199,44,0.07); border:1px solid rgba(255,199,44,0.2);
+    border-radius:10px; padding:13px 18px; margin-bottom:28px;
+    color:var(--accent2); font-size:0.88rem; font-weight:600; text-align:center;
+  }
+  .selected-tests-summary {
+    background:var(--bg3); border-radius:12px; padding:20px; margin-bottom:28px;
+    border:1px solid var(--border); min-height:64px;
+  }
+  .selected-tests-summary h4 { font-weight:700; color:var(--text-dim); margin-bottom:12px; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.8px; }
+  .selected-item { display:flex; justify-content:space-between; font-size:0.9rem; color:var(--text); padding:5px 0; }
+  .selected-item span:last-child { color:var(--accent2); font-weight:700; }
+  .total-row { display:flex; justify-content:space-between; margin-top:14px; padding-top:14px; border-top:1px solid var(--border); font-weight:800; color:var(--text); font-size:1rem; }
+  .total-row span:last-child { color:var(--primary); font-size:1.1rem; }
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .form-group { display:flex; flex-direction:column; gap:7px; }
+  .form-group.full { grid-column:1/-1; }
+  .form-group label { font-size:0.85rem; font-weight:700; color:var(--text-muted); }
+  .form-group input,.form-group select,.form-group textarea {
+    padding:12px 15px; border:1px solid var(--border2); border-radius:10px;
+    font-family:'Cairo',sans-serif; font-size:0.93rem; outline:none;
+    background:var(--bg3); color:var(--text); transition:border 0.2s,box-shadow 0.2s; direction:rtl;
+  }
+  .form-group input::placeholder,.form-group textarea::placeholder { color:var(--text-dim); }
+  .form-group input:focus,.form-group select:focus,.form-group textarea:focus { border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-glow); }
+  .form-group select option { background:var(--bg2); }
+  .form-group textarea { resize:vertical; min-height:90px; }
+  .submit-btn {
+    width:100%; padding:15px; background:var(--grad-blue); color:white;
+    border:none; border-radius:12px; font-family:'Tajawal',sans-serif; font-size:1.05rem; font-weight:800;
+    cursor:pointer; transition:all 0.25s; margin-top:22px;
+    box-shadow:0 6px 24px rgba(13,110,253,0.35);
+  }
+  .submit-btn:hover { transform:translateY(-2px); box-shadow:0 10px 36px rgba(13,110,253,0.5); }
+
+  /* CONTACT */
+  #contact { background:var(--bg); }
+  .contact-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; max-width:900px; margin:0 auto; }
+  .contact-card {
+    background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:28px 24px; text-align:center; transition:all 0.25s;
+  }
+  .contact-card:hover { border-color:rgba(13,110,253,0.3); transform:translateY(-4px); box-shadow:0 12px 40px rgba(0,0,0,0.25); }
+  .contact-icon { width:52px; height:52px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; margin:0 auto 16px; background:var(--surface2); border:1px solid var(--border); }
+  .contact-card h4 { font-family:'Tajawal',sans-serif; font-weight:800; font-size:0.97rem; color:var(--text); margin-bottom:8px; }
+  .contact-card p { color:var(--text-muted); font-size:0.88rem; line-height:1.7; }
+  .contact-card a { color:var(--primary); font-weight:700; text-decoration:none; }
+  .contact-card a:hover { color:#60a5fa; }
+
+  /* FOOTER */
+  footer { background:var(--surface); border-top:1px solid var(--border); padding:40px 6%; text-align:center; }
+  .footer-logo { font-family:'Tajawal',sans-serif; font-size:1.4rem; font-weight:900; color:var(--text); margin-bottom:8px; }
+  .footer-logo span { color:var(--primary); }
+  footer p { color:var(--text-dim); font-size:0.88rem; line-height:1.7; }
+
+  /* MODAL */
+  .success-modal { display:none; position:fixed; inset:0; z-index:2000; background:rgba(0,0,0,0.78); backdrop-filter:blur(10px); align-items:center; justify-content:center; }
+  .success-modal.show { display:flex; }
+  .success-box {
+    background:var(--surface); border:1px solid var(--border); border-radius:24px; padding:52px 44px;
+    text-align:center; max-width:480px; width:92%;
+    animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+    box-shadow:0 32px 80px rgba(0,0,0,0.5);
+  }
+  .success-icon { width:80px; height:80px; border-radius:50%; background:var(--grad-teal); display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 24px; box-shadow:0 8px 32px rgba(0,201,167,0.35); }
+  .success-box h3 { font-family:'Tajawal',sans-serif; font-size:1.6rem; font-weight:900; color:var(--text); margin-bottom:10px; }
+  .success-box > p { color:var(--text-muted); line-height:1.8; margin-bottom:24px; font-size:0.93rem; }
+  .success-details { background:var(--bg3); border-radius:12px; padding:18px; margin-bottom:24px; text-align:right; border:1px solid var(--border); }
+  .success-details div { display:flex; justify-content:space-between; padding:6px 0; font-size:0.9rem; color:var(--text-muted); border-bottom:1px solid var(--border); }
+  .success-details div:last-child { border:none; }
+  .success-details span:last-child { color:var(--text); font-weight:600; }
+  .success-details div:last-child span:last-child { color:var(--primary); font-weight:800; }
+  .close-success { background:var(--grad-blue); color:white; border:none; border-radius:10px; padding:13px 40px; font-family:'Cairo',sans-serif; font-size:0.97rem; font-weight:700; cursor:pointer; width:100%; box-shadow:0 4px 18px rgba(13,110,253,0.35); transition:all 0.2s; }
+  .close-success:hover { box-shadow:0 6px 28px rgba(13,110,253,0.5); }
+  .empty-msg { text-align:center; color:var(--text-dim); font-size:0.88rem; padding:16px 0; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes popIn { from { opacity:0; transform:scale(0.82); } to { opacity:1; transform:scale(1); } }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+
+  /* RESPONSIVE */
+  @media (max-width:768px) {
+    .nav-links { display:none; }
+    .form-grid { grid-template-columns:1fr; }
+    .booking-wrapper { padding:30px 20px; }
+    .stat-item { padding:18px 20px; }
+    .success-box { padding:36px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#home" class="nav-logo">
+    <div class="nav-logo-icon">🔬</div>
+    <div class="nav-logo-text"><span>Prime</span> Lab</div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#home">الرئيسية</a></li>
+    <li><a href="#features">مميزاتنا</a></li>
+    <li><a href="#tests">التحاليل</a></li>
+    <li><a href="#contact">تواصل معنا</a></li>
+    <li><a href="#booking" class="nav-book">احجز الآن</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="home">
+  <div class="hero-glow"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-pill"><div class="hero-pill-dot"></div>معتمد من وزارة الصحة المصرية</div>
+    <h1 class="hero-title">
+      دقة <span class="hl1">التشخيص</span><br>
+      تبدأ من <span class="hl2">Prime Lab</span>
+    </h1>
+    <p class="hero-sub">معامل تحاليل طبية متكاملة في كفر الشيخ — نجمع بين أحدث التقنيات والكادر المتخصص لنضمن لك نتائج دقيقة وسريعة بأسعار في متناول الجميع.</p>
+    <div class="hero-btns">
+      <a href="#booking" class="btn-primary">احجز تحليلك الآن ←</a>
+      <a href="#tests" class="btn-ghost">استعرض التحاليل</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item"><div class="stat-num">+50</div><div class="stat-label">نوع تحليل</div></div>
+      <div class="stat-item"><div class="stat-num">24h</div><div class="stat-label">نتائج سريعة</div></div>
+      <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">دقة مضمونة</div></div>
+      <div class="stat-item"><div class="stat-num">90%</div><div class="stat-label">خصم لفترة محدودة</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-header">
+    <div class="section-tag">ليه تختارنا</div>
+    <h2>مميزات تميزنا عن غيرنا</h2>
+    <p>نلتزم بأعلى معايير الجودة في كل خطوة، من استقبالك حتى حصولك على نتيجتك</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card"><div class="feature-icon">🔬</div><h3>أحدث الأجهزة الطبية</h3><p>نستخدم أحدث معدات التحليل المعتمدة عالمياً لضمان أعلى دقة في النتائج</p></div>
+    <div class="feature-card"><div class="feature-icon">⚡</div><h3>نتائج في وقت قياسي</h3><p>معظم التحاليل جاهزة في ساعات قليلة، ونتائج عاجلة في أقل من ساعة</p></div>
+    <div class="feature-card"><div class="feature-icon">👨‍⚕️</div><h3>كادر طبي متخصص</h3><p>فريق من الأطباء والتحليليين ذوي الخبرة العالية في مختلف التخصصات</p></div>
+    <div class="feature-card"><div class="feature-icon">💰</div><h3>أسعار تنافسية</h3><p>أسعار مناسبة وعروض وخصومات دورية تجعل الرعاية الصحية في متناول الجميع</p></div>
+    <div class="feature-card"><div class="feature-icon">📱</div><h3>نتائج إلكترونية</h3><p>استقبل نتائج تحاليلك على هاتفك مباشرة عبر واتساب أو البريد الإلكتروني</p></div>
+    <div class="feature-card"><div class="feature-icon">🛡️</div><h3>بيئة نظيفة ومعقمة</h3><p>معايير تعقيم وسلامة صارمة في جميع أقسام المعمل وفق البروتوكولات الطبية</p></div>
+  </div>
+</section>
+
+<!-- TESTS -->
+<section id="tests">
+  <div class="section-header">
+    <div class="section-tag">التحاليل والأسعار</div>
+    <h2>اختر تحليلك وسعره</h2>
+    <p>اختر التحاليل المطلوبة وهتتضاف تلقائياً لطلب الحجز مع حساب الإجمالي</p>
+  </div>
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="ابحث عن تحليل..." oninput="filterTests()">
+  </div>
+  <div class="categories">
+    <button class="cat-btn active" onclick="filterByCategory('all',this)">الكل</button>
+    <button class="cat-btn" onclick="filterByCategory('دم',this)">تحاليل الدم</button>
+    <button class="cat-btn" onclick="filterByCategory('هرمونات',this)">هرمونات</button>
+    <button class="cat-btn" onclick="filterByCategory('كبد',this)">الكبد والكلى</button>
+    <button class="cat-btn" onclick="filterByCategory('سكر',this)">السكر</button>
+    <button class="cat-btn" onclick="filterByCategory('فيروسات',this)">فيروسات</button>
+    <button class="cat-btn" onclick="filterByCategory('بول',this)">تحليل البول</button>
+    <button class="cat-btn" onclick="filterByCategory('قلب',this)">القلب</button>
+    <button class="cat-btn" onclick="filterByCategory('شامل',this)">باكدجات شاملة</button>
+  </div>
+  <div class="tests-grid" id="testsGrid"></div>
+</section>
+
+<!-- BOOKING -->
+<section id="booking">
+  <div class="section-header">
+    <div class="section-tag">احجز موعدك</div>
+    <h2>حجز تحليل طبي</h2>
+    <p>اختر التحاليل من القسم السابق وأكمل بياناتك أدناه لتأكيد الحجز</p>
+  </div>
+  <div class="booking-wrapper">
+    <div class="notice">⚠️ يرجى الصيام 8–12 ساعة قبل تحاليل الدم والسكر — للاستفسار: <strong>+20 47 2714440</strong></div>
+    <div class="selected-tests-summary">
+      <h4>التحاليل المختارة</h4>
+      <div id="selectedSummary"><p class="empty-msg">لم يتم اختيار أي تحليل — اختر من القسم أعلاه</p></div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label>الاسم الكامل *</label><input type="text" id="fname" placeholder="أدخل اسمك الكامل"></div>
+      <div class="form-group"><label>رقم الهاتف *</label><input type="tel" id="fphone" placeholder="01xxxxxxxxx"></div>
+      <div class="form-group"><label>البريد الإلكتروني</label><input type="email" id="femail" placeholder="example@email.com"></div>
+      <div class="form-group"><label>العمر</label><input type="number" id="fage" placeholder="السن" min="1" max="120"></div>
+      <div class="form-group"><label>النوع</label><select id="fgender"><option value="">اختر...</option><option>ذكر</option><option>أنثى</option></select></div>
+      <div class="form-group"><label>التاريخ المفضل</label><input type="date" id="fdate"></div>
+      <div class="form-group full"><label>ملاحظات إضافية (اختياري)</label><textarea id="fnotes" placeholder="أي معلومات إضافية أو أسئلة..."></textarea></div>
+    </div>
+    <button class="submit-btn" onclick="submitBooking()">تأكيد الحجز →</button>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-header">
+    <div class="section-tag">تواصل معنا</div>
+    <h2>نحن هنا لمساعدتك</h2>
+    <p>تواصل معنا بأي طريقة تناسبك</p>
+  </div>
+  <div class="contact-grid">
+    <div class="contact-card"><div class="contact-icon">📞</div><h4>اتصل بنا</h4><p><a href="tel:+20472714440">+20 47 2714440</a></p><p>متاحون خلال ساعات العمل</p></div>
+    <div class="contact-card"><div class="contact-icon">✉️</div><h4>البريد الإلكتروني</h4><p><a href="/cdn-cgi/l/email-protection#7707051e1a121b1615454745424547454237101a161e1b5914181a"><span class="__cf_email__" data-cfemail="3f4f4d56525a535e5d0d0f0d0a0d0f0d0a7f58525e5653115c5052">[email&#160;protected]</span></a></p></div>
+    <div class="contact-card"><div class="contact-icon">📍</div><h4>العنوان</h4><p>مركز مطوبس أمام المستشفى العام<br>كفر الشيخ، مصر 33511</p></div>
+    <div class="contact-card"><div class="contact-icon">🕐</div><h4>ساعات العمل</h4><p>السبت – الخميس: 7 ص – 10 م<br>الجمعة: 9 ص – 4 م</p></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo"><span>Prime</span> Lab 🔬</div>
+  <p>كفر الشيخ، مصر — جودة لا تُضاهى في كل تحليل</p>
+  <p style="margin-top:8px;font-size:0.8rem;">© 2025 Prime Lab. جميع الحقوق محفوظة.</p>
+</footer>
+
+<!-- SUCCESS MODAL -->
+<div class="success-modal" id="successModal">
+  <div class="success-box">
+    <div class="success-icon">✓</div>
+    <h3>تم الحجز بنجاح!</h3>
+    <p>تم استلام طلبك وسيتواصل معك فريقنا في أقرب وقت لتأكيد الموعد.</p>
+    <div class="success-details" id="successDetails"></div>
+    <p style="font-size:0.85rem;color:var(--text-dim);margin-bottom:20px;">للاستفسار: <strong style="color:var(--text-muted)">+20 47 2714440</strong></p>
+    <button class="close-success" onclick="closeSuccess()">حسناً، شكراً!</button>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+const ALL_TESTS = [
+  // دم
+  {id:1,  name:'صورة دم كاملة CBC',             price:80,  cat:'دم',        time:'2 ساعة',  desc:'تحليل شامل لخلايا الدم الحمراء والبيضاء والصفائح الدموية'},
+  {id:6,  name:'دهون الدم الشاملة',             price:160, cat:'دم',        time:'4 ساعات', desc:'كوليسترول كلي، LDL، HDL، والدهون الثلاثية'},
+  {id:16, name:'مجموعة الدم ABO+Rh',            price:30,  cat:'دم',        time:'1 ساعة',  desc:'تحديد فصيلة الدم والعامل الريصي'},
+  {id:17, name:'سرعة الترسيب ESR',              price:40,  cat:'دم',        time:'2 ساعة',  desc:'مؤشر للالتهاب العام في الجسم'},
+  {id:18, name:'بروتين سي التفاعلي CRP',        price:80,  cat:'دم',        time:'3 ساعات', desc:'فحص دقيق لمستوى الالتهاب في الجسم'},
+  {id:19, name:'الحديد ونسبة التشبع',           price:110, cat:'دم',        time:'4 ساعات', desc:'قياس الحديد في الدم ونسبة ارتباطه بالبروتين'},
+  {id:20, name:'فيريتين Ferritin',              price:130, cat:'دم',        time:'5 ساعات', desc:'مخزون الحديد في الجسم، مهم لتشخيص فقر الدم'},
+  {id:21, name:'حمض الفوليك',                   price:120, cat:'دم',        time:'5 ساعات', desc:'قياس مستوى فيتامين B9 الضروري لتكوين خلايا الدم'},
+
+  // سكر
+  {id:2,  name:'تحليل السكر الصائم',            price:40,  cat:'سكر',       time:'1 ساعة',  desc:'قياس مستوى الجلوكوز في الدم بعد الصيام'},
+  {id:3,  name:'سكر تراكمي HbA1c',              price:120, cat:'سكر',       time:'3 ساعات', desc:'قياس متوسط مستوى السكر خلال الـ 3 أشهر الماضية'},
+  {id:22, name:'منحنى السكر (تحمل الجلوكوز)',   price:90,  cat:'سكر',       time:'3 ساعات', desc:'قياس السكر بعد تناول جلوكوز لتشخيص مقاومة الأنسولين'},
+  {id:23, name:'أنسولين صائم',                  price:100, cat:'سكر',       time:'4 ساعات', desc:'قياس مستوى هرمون الأنسولين في الدم بعد الصيام'},
+
+  // كبد وكلى
+  {id:4,  name:'وظائف الكبد',                   price:150, cat:'كبد',       time:'4 ساعات', desc:'قياس إنزيمات الكبد وفحص كامل لوظائفه'},
+  {id:5,  name:'وظائف الكلى',                   price:130, cat:'كبد',       time:'4 ساعات', desc:'يوريا، كرياتينين، وحمض اليوريك'},
+  {id:24, name:'حمض اليوريك',                   price:60,  cat:'كبد',       time:'2 ساعة',  desc:'قياس حمض اليوريك للكشف عن النقرس وأمراض الكلى'},
+  {id:25, name:'الألبومين',                      price:70,  cat:'كبد',       time:'3 ساعات', desc:'قياس بروتين الألبومين كمؤشر لوظائف الكبد'},
+  {id:26, name:'البيليروبين الكلي والمباشر',    price:80,  cat:'كبد',       time:'3 ساعات', desc:'فحص اليرقان وتقييم وظائف الكبد'},
+  {id:27, name:'فحص الكلى الشامل',              price:200, cat:'كبد',       time:'5 ساعات', desc:'باكدج شامل: يوريا، كرياتينين، حمض يوريك، صوديوم، بوتاسيوم'},
+
+  // هرمونات
+  {id:7,  name:'هرمونات الغدة الدرقية TSH',     price:90,  cat:'هرمونات',   time:'5 ساعات', desc:'فحص نشاط الغدة الدرقية'},
+  {id:8,  name:'هرمونات الغدة الكاملة T3/T4',   price:180, cat:'هرمونات',   time:'6 ساعات', desc:'فحص شامل لكل هرمونات الغدة الدرقية'},
+  {id:12, name:'هرمون الحمل β-HCG',             price:70,  cat:'هرمونات',   time:'2 ساعة',  desc:'كشف هرمون الحمل في الدم بدقة عالية'},
+  {id:13, name:'فيتامين د3',                    price:200, cat:'هرمونات',   time:'6 ساعات', desc:'قياس مستوى فيتامين D في الدم'},
+  {id:14, name:'فيتامين ب12',                   price:150, cat:'هرمونات',   time:'5 ساعات', desc:'قياس مستوى فيتامين B12 الضروري للأعصاب'},
+  {id:28, name:'هرمون FSH و LH',                price:160, cat:'هرمونات',   time:'6 ساعات', desc:'هرمونات الخصوبة والجهاز التناسلي'},
+  {id:29, name:'هرمون البرولاكتين',             price:110, cat:'هرمونات',   time:'5 ساعات', desc:'قياس هرمون الحليب، مهم لتشخيص اضطرابات الخصوبة'},
+  {id:30, name:'هرمون التستوستيرون',            price:130, cat:'هرمونات',   time:'5 ساعات', desc:'قياس هرمون الذكورة الرئيسي'},
+  {id:31, name:'هرمون الإستروجين',              price:130, cat:'هرمونات',   time:'6 ساعات', desc:'قياس هرمون الأنوثة الرئيسي وتقييم الوظيفة التناسلية'},
+  {id:32, name:'هرمون الكورتيزول',              price:150, cat:'هرمونات',   time:'6 ساعات', desc:'هرمون الإجهاد، يُفحص صباحاً لتقييم الغدة الكظرية'},
+  {id:33, name:'هرمون النمو GH',                price:200, cat:'هرمونات',   time:'6 ساعات', desc:'قياس هرمون النمو لتقييم نشاط الغدة النخامية'},
+
+  // فيروسات
+  {id:9,  name:'فيروس سي HCV',                  price:100, cat:'فيروسات',   time:'4 ساعات', desc:'كشف الأجسام المضادة لفيروس التهاب الكبد C'},
+  {id:10, name:'فيروس بي HBsAg',                price:90,  cat:'فيروسات',   time:'3 ساعات', desc:'كشف مستضد السطح لفيروس التهاب الكبد B'},
+  {id:34, name:'HIV (الإيدز)',                   price:120, cat:'فيروسات',   time:'4 ساعات', desc:'فحص الأجسام المضادة لفيروس نقص المناعة البشرية'},
+  {id:35, name:'VDRL (الزهري)',                  price:70,  cat:'فيروسات',   time:'3 ساعات', desc:'فحص الأمراض المنقولة جنسياً'},
+  {id:36, name:'كورونا COVID-19 PCR',            price:350, cat:'فيروسات',   time:'24 ساعة', desc:'تحليل PCR للكشف عن فيروس كورونا'},
+  {id:37, name:'كورونا سريع Antigen',            price:100, cat:'فيروسات',   time:'30 دقيقة',desc:'فحص سريع للكشف عن مستضد فيروس كورونا'},
+  {id:38, name:'هيليكوباكتر بيلوري HP',         price:150, cat:'فيروسات',   time:'4 ساعات', desc:'كشف بكتيريا المعدة المسببة للقرحة'},
+
+  // بول وبراز
+  {id:11, name:'تحليل البول الكامل',            price:50,  cat:'بول',       time:'1 ساعة',  desc:'فحص شامل للبول يشمل الكيمياء والميكروسكوب'},
+  {id:15, name:'تحليل البراز',                  price:40,  cat:'بول',       time:'2 ساعة',  desc:'فحص البراز بحثاً عن طفيليات أو دم خفي'},
+  {id:39, name:'زراعة بول Culture',             price:120, cat:'بول',       time:'48 ساعة', desc:'كشف البكتيريا المسببة لعدوى المسالك البولية وتحديد المضاد'},
+  {id:40, name:'بروتين في البول (24 ساعة)',      price:80,  cat:'بول',       time:'24 ساعة', desc:'قياس كمية البروتين المُفقودة في البول خلال يوم كامل'},
+  {id:41, name:'بول طفيليات Ova & Parasites',   price:60,  cat:'بول',       time:'2 ساعة',  desc:'فحص ميكروسكوبي للكشف عن طفيليات وبيوضها'},
+
+  // قلب
+  {id:42, name:'إنزيمات القلب Troponin',        price:200, cat:'قلب',       time:'2 ساعة',  desc:'مؤشر دقيق لتلف عضلة القلب، يُستخدم في حالات الطوارئ'},
+  {id:43, name:'CK-MB (إنزيمات القلب)',         price:150, cat:'قلب',       time:'3 ساعات', desc:'إنزيم خاص بعضلة القلب لتشخيص النوبة القلبية'},
+  {id:44, name:'D-Dimer (جلطات الدم)',          price:250, cat:'قلب',       time:'4 ساعات', desc:'كشف الجلطات الدموية في الأوردة والشرايين'},
+  {id:45, name:'BNP (قصور القلب)',              price:300, cat:'قلب',       time:'5 ساعات', desc:'هرمون للكشف عن قصور القلب وتقييم شدته'},
+
+  // شامل
+  {id:46, name:'باكدج فحص ما قبل الزواج',      price:450, cat:'شامل',      time:'يوم عمل', desc:'صورة دم، سكر، كبد، كلى، فيروسات، فصيلة دم، وأكثر'},
+  {id:47, name:'باكدج الفحص الدوري الشامل',    price:600, cat:'شامل',      time:'يوم عمل', desc:'فحص كامل للجسم: دم، سكر، كبد، كلى، دهون، هرمونات، فيروسات'},
+  {id:48, name:'باكدج المرأة الشامل',           price:500, cat:'شامل',      time:'يوم عمل', desc:'هرمونات تناسلية، دم، سكر، كبد، كلى، فيتامينات، غدة درقية'},
+  {id:49, name:'باكدج الرياضيين',               price:400, cat:'شامل',      time:'يوم عمل', desc:'صورة دم، سكر، كبد، كلى، حديد، فيتامينات، تستوستيرون'},
+];
+
+let selectedTests = new Set();
+let currentCategory = 'all';
+let searchTerm = '';
+
+function renderTests() {
+  const grid = document.getElementById('testsGrid');
+  const filtered = ALL_TESTS.filter(t => {
+    const mc = currentCategory === 'all' || t.cat.includes(currentCategory);
+    const ms = t.name.toLowerCase().includes(searchTerm) || t.desc.includes(searchTerm);
+    return mc && ms;
+  });
+  if (!filtered.length) { grid.innerHTML='<p class="empty-msg" style="grid-column:1/-1">لا توجد تحاليل بهذا الاسم</p>'; return; }
+  grid.innerHTML = filtered.map(t => `
+    <div class="test-card ${selectedTests.has(t.id)?'selected':''}" onclick="toggleTest(${t.id})">
+      <div class="test-top">
+        <div class="test-name">${t.name}</div>
+        <div class="test-right">
+          <div class="test-price">${t.price} جنيه</div>
+          <div class="test-check">${selectedTests.has(t.id)?'✓':''}</div>
+        </div>
+      </div>
+      <p class="test-desc">${t.desc}</p>
+      <div class="test-badges">
+        <span class="test-badge">⏱ ${t.time}</span>
+        <span class="test-badge">${t.cat}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleTest(id) {
+  selectedTests.has(id) ? selectedTests.delete(id) : selectedTests.add(id);
+  renderTests(); updateSummary();
+}
+
+function updateSummary() {
+  const c = document.getElementById('selectedSummary');
+  if (!selectedTests.size) { c.innerHTML='<p class="empty-msg">لم يتم اختيار أي تحليل — اختر من القسم أعلاه</p>'; return; }
+  const chosen = ALL_TESTS.filter(t => selectedTests.has(t.id));
+  const total = chosen.reduce((s,t) => s+t.price, 0);
+  c.innerHTML = chosen.map(t=>`<div class="selected-item"><span>🧪 ${t.name}</span><span>${t.price} جنيه</span></div>`).join('')
+    + `<div class="total-row"><span>الإجمالي</span><span>${total} جنيه</span></div>`;
+}
+
+function filterByCategory(cat, btn) {
+  currentCategory = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active'); renderTests();
+}
+
+function filterTests() {
+  searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+  renderTests();
+}
+
+function submitBooking() {
+  const name = document.getElementById('fname').value.trim();
+  const phone = document.getElementById('fphone').value.trim();
+  if (!name||!phone) { alert('من فضلك أدخل الاسم ورقم الهاتف'); return; }
+  if (!selectedTests.size) { alert('من فضلك اختر تحليل واحد على الأقل'); return; }
+  const chosen = ALL_TESTS.filter(t => selectedTests.has(t.id));
+  const total = chosen.reduce((s,t)=>s+t.price,0);
+  const date = document.getElementById('fdate').value;
+  const gender = document.getElementById('fgender').value;
+  document.getElementById('successDetails').innerHTML = `
+    <div><span>الاسم</span><span>${name}</span></div>
+    <div><span>الهاتف</span><span>${phone}</span></div>
+    ${gender?`<div><span>النوع</span><span>${gender}</span></div>`:''}
+    ${date?`<div><span>الموعد المفضل</span><span>${date}</span></div>`:''}
+    <div><span>عدد التحاليل</span><span>${chosen.length} تحليل</span></div>
+    <div><span>الإجمالي</span><span>${total} جنيه</span></div>
+  `;
+  document.getElementById('successModal').classList.add('show');
+}
+
+function closeSuccess() {
+  document.getElementById('successModal').classList.remove('show');
+  selectedTests.clear();
+  ['fname','fphone','femail','fage','fdate','fnotes'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('fgender').value='';
+  updateSummary(); renderTests();
+}
+
+renderTests();
+document.getElementById('fdate').min = new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
